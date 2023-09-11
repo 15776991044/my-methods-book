@@ -17,6 +17,7 @@ export function getCompatibilityNum(num){
 
 }
 
+
 //获取小数有几位
 export function decimals(num) {
   num=num.toString()

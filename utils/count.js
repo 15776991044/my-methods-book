@@ -5,7 +5,7 @@
  ** 调用：accAdd(arg1,arg2)
  ** 返回值：arg1加上arg2的精确结果
  **/
-export function accAdd(arg1, arg2) {
+ function accAdd(arg1, arg2) {
   var r1, r2, m, c
   try {
     r1 = arg1.toString().split('.')[1].length
@@ -36,12 +36,30 @@ export function accAdd(arg1, arg2) {
 }
 
 /**
+** 乘法函数，用来得到精确的乘法结果
+** 说明：javascript的乘法结果会有误差，在两个浮点数相乘的时候会比较明显。这个函数返回较为精确的乘法结果。
+** 调用：accMul(arg1,arg2)
+** 返回值：arg1乘以 arg2的精确结果
+**/
+function accMul(arg1, arg2) {
+  var m = 0; var s1 = arg1.toString(); var s2 = arg2.toString()
+  try {
+    m += s1.split('.')[1].length
+  } catch (e) {
+  }
+  try {
+    m += s2.split('.')[1].length
+  } catch (e) {
+  }
+  return Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m)
+}
+/**
 ** 减法函数，用来得到精确的减法结果
 ** 说明：javascript的减法结果会有误差，在两个浮点数相减的时候会比较明显。这个函数返回较为精确的减法结果。
 ** 调用：accSub(arg1,arg2)
 ** 返回值：arg1减去arg2的精确结果
 **/
-export function accSub(arg1, arg2) {
+ function accSub(arg1, arg2) {
   var r1, r2, m, n
   try {
     r1 = arg1.toString().split('.')[1].length
@@ -55,26 +73,7 @@ export function accSub(arg1, arg2) {
   }
   m = Math.pow(10, Math.max(r1, r2)) // last modify by deeka //动态控制精度长度
   n = (r1 >= r2) ? r1 : r2
-  return ((arg1 * m - arg2 * m) / m).toFixed(n)
-}
-
-/**
-** 乘法函数，用来得到精确的乘法结果
-** 说明：javascript的乘法结果会有误差，在两个浮点数相乘的时候会比较明显。这个函数返回较为精确的乘法结果。
-** 调用：accMul(arg1,arg2)
-** 返回值：arg1乘以 arg2的精确结果
-**/
-export function accMul(arg1, arg2) {
-  var m = 0; var s1 = arg1.toString(); var s2 = arg2.toString()
-  try {
-    m += s1.split('.')[1].length
-  } catch (e) {
-  }
-  try {
-    m += s2.split('.')[1].length
-  } catch (e) {
-  }
-  return Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m)
+  return (accMul(arg1,m) - accMul(arg2,m)) / m
 }
 
 /**
@@ -83,7 +82,7 @@ export function accMul(arg1, arg2) {
 ** 调用：accDiv(arg1,arg2)
 ** 返回值：arg1除以arg2的精确结果
 **/
-export function accDiv(arg1, arg2) {
+ function accDiv(arg1, arg2) {
   var t1 = 0; var t2 = 0; var r1; var r2
   try {
     t1 = arg1.toString().split('.')[1].length
@@ -95,7 +94,18 @@ export function accDiv(arg1, arg2) {
   }
   r1 = Number(arg1.toString().replace('.', ''))
   r2 = Number(arg2.toString().replace('.', ''))
-  return (r1 / r2) * Math.pow(10, t2 - t1)
+  return accMul((r1 / r2),Math.pow(10, t2 - t1))
+}
+
+//四舍五入，保留n位小数
+function keepNDecimal(num,decNum) {
+  var result = parseFloat(num);
+  if (isNaN(result)) {
+    alert('传递参数错误，请检查！');
+    return false;}
+  let m = Math.pow(10, decNum||0)
+  result = accDiv(Math.round(accMul(num,m)),m);
+  return result;
 }
 
 
